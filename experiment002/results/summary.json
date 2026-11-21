@@ -1,0 +1,149 @@
+{
+  "experiment": "SihtiZipper Experiment 002: a trained pixel diffusion model vs explicit reversible object tracks",
+  "time_basis": "Each prediction uses the current and earlier observations only; scoring against clean test frames is after prediction.",
+  "data": {
+    "train_scene_seeds": [
+      1000,
+      1319
+    ],
+    "test_scene_seeds": [
+      50000,
+      50023
+    ],
+    "video_frames": 18,
+    "image_shape": [
+      2,
+      24,
+      24
+    ],
+    "occluded_columns": [
+      9,
+      15
+    ],
+    "identity": "two distinct color appearance channels visible when unoccluded",
+    "reverse_fraction": 0.25,
+    "ghost_observations": 40
+  },
+  "method": {
+    "diffusion": "genuine 18-step DDPM epsilon predictor, learned by Adam on independent synthetic training sequences; conditional on current and previous two masked images",
+    "zipper": "online explicit separate tracking for two appearance channels, 1-step velocity estimates and a jam/relock/abstain gate; not a learned diffusion model",
+    "constant_velocity": "identical track estimate but never rejects a distant candidate",
+    "hold_last": "previous occluded image; no extrapolation",
+    "limit": "appearance channels reveal identity when visible; only hidden-center association probes delayed tracking. This comparison does not establish superiority on unlabelled natural video."
+  },
+  "train": {
+    "train_steps": 480,
+    "train_examples": 5120,
+    "loss_trace": [
+      [
+        0,
+        1.08716
+      ],
+      [
+        50,
+        0.09134
+      ],
+      [
+        100,
+        0.05306
+      ],
+      [
+        150,
+        0.02844
+      ],
+      [
+        200,
+        0.02077
+      ],
+      [
+        250,
+        0.01698
+      ],
+      [
+        300,
+        0.01967
+      ],
+      [
+        350,
+        0.0171
+      ],
+      [
+        400,
+        0.01554
+      ],
+      [
+        450,
+        0.01364
+      ],
+      [
+        479,
+        0.01305
+      ]
+    ],
+    "training_seconds": 23.88
+  },
+  "parameters": 80786,
+  "validation": {
+    "scene_seeds": [
+      40000,
+      40023
+    ],
+    "background_bias": 0.45,
+    "candidate_biases": 21,
+    "validation_hidden_loss_min": 0.002689
+  },
+  "inference_seconds": 2.03,
+  "device": "cpu",
+  "scores": {
+    "hold_last": {
+      "hidden_region_mse": 0.012496,
+      "hidden_foreground_mse": 0.298107,
+      "false_observation_joins": null,
+      "observation_joins": null,
+      "observation_abstentions": null,
+      "hidden_center_forecast_mae_px": NaN,
+      "hidden_center_estimates": 0,
+      "hidden_center_unknown": 256
+    },
+    "constant_velocity": {
+      "hidden_region_mse": 0.007788,
+      "hidden_foreground_mse": 0.166677,
+      "false_observation_joins": 40,
+      "observation_joins": 625,
+      "observation_abstentions": 143,
+      "hidden_center_forecast_mae_px": 5.536,
+      "hidden_center_estimates": 256,
+      "hidden_center_unknown": 0
+    },
+    "zipper": {
+      "hidden_region_mse": 0.006566,
+      "hidden_foreground_mse": 0.115809,
+      "false_observation_joins": 2,
+      "observation_joins": 567,
+      "observation_abstentions": 201,
+      "hidden_center_forecast_mae_px": 1.789,
+      "hidden_center_estimates": 256,
+      "hidden_center_unknown": 0
+    },
+    "diffusion": {
+      "hidden_region_mse": 0.011443,
+      "hidden_foreground_mse": 0.247984,
+      "false_observation_joins": null,
+      "observation_joins": null,
+      "observation_abstentions": null,
+      "hidden_center_forecast_mae_px": 0.758,
+      "hidden_center_estimates": 2,
+      "hidden_center_unknown": 254
+    },
+    "diffusion_raw": {
+      "hidden_region_mse": 0.136207,
+      "hidden_foreground_mse": 0.055025,
+      "false_observation_joins": null,
+      "observation_joins": null,
+      "observation_abstentions": null,
+      "hidden_center_forecast_mae_px": 2.859,
+      "hidden_center_estimates": 251,
+      "hidden_center_unknown": 5
+    }
+  }
+}
