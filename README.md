@@ -1,5 +1,15 @@
 # SihtiZipper — reversible, local vector switchyard
 
+## Experiment 002 — a trained diffusion model meets an occluded-video zipper
+
+**[Play the recorded 16-frame sequences](experiment002/viewer.html)** · **[Protocol and limitations](experiment002/README.md)** · [Numerical scores](experiment002/results/summary.json) · [Trained DDPM checkpoint](experiment002/results/tiny_ddpm.pt) · [Contact sheet](experiment002/results/contact_sheet.png).
+
+A genuinely trained **80,786-parameter, 18-step pixel DDPM** and an explicit, reversible **zipper-style gated tracker** receive the same occluded observations of two colored moving objects, including camera ghosts and reversals. A constant-velocity tracker without the gate and hold-last are controls. This Python tracking port follows the original zipper's *hold/jam/relock* idea; it does **not** invoke the original JavaScript engine or establish general multimodal object binding.
+
+On 24 independent synthetic test videos: hidden-strip MSE was **0.006566** for the gated tracker, **0.007788** ungated, **0.012496** hold-last, **0.136207** for raw DDPM and **0.011443** for DDPM with a single background correction selected on independent validation videos. Raw DDPM actually had the best hidden-foreground-only MSE (**0.055025**) but filled much of the background with erroneous brightness. Wrong observed associations were **2/567** for the gated tracker versus **40/625** ungated, at the cost of more abstentions. These are *different tasks*: the generative model does not itself emit identity links. No claim against a competitive modern video diffusion architecture follows.
+
+Run `python experiment002/compare.py` to reproduce, then `python experiment002/make_viewer.py` to rebuild the offline filmstrip. Requires numpy, torch and pillow; Experiment 001 still runs without dependencies.
+
 A working **offline browser experiment** for a mechanical idea from a broken zipper: instead of averaging two vectors into one residual stream, a slider stores a reversible **relation between two original teeth**. When a pair ceases to match, it can slip its alignment by one index, jam and open the seam, or re-lock after compatible evidence returns. The raw vectors never change. Three tracks (CORE reference, MID and FAST auxiliary signals) have independent sliders.
 
 **[Open the demo](index.html)** or visit the repository's GitHub Pages root if Pages is enabled. Double-click `index.html` on a desktop; there is no server, build step, GPU, model download, `npm install`, or network request.
