@@ -11,6 +11,19 @@ test('reversible seam stores raw vectors as immutable, reconstructable originals
  assert.deepEqual(z.original(7,'mid'),sent[7].mid);
  assert.ok(z.seams.length>0);assert.ok(z.seams[0].links.every(l=>l.source>=0));
 });
+test('unzip / rezip release only the seam, restoring original links exactly',()=>{
+ const z=new E.Zipper({threshold:.001});
+ for(let t=0;t<22;t++)z.append({core:item(t),mid:item(t),fast:item(t)});
+ const before=z.export(),beforeLinks=z.activeLinks(17);
+ assert.equal(beforeLinks.length,2);
+ assert.equal(z.window(15,18,'mid',true),4);
+ assert.equal(z.activeLinks(17).length,1);
+ assert.equal(z.activeLinks(17)[0].track,'fast');
+ assert.equal(z.window(15,18,'mid',false),4);
+ assert.deepEqual(z.activeLinks(17),beforeLinks);
+ assert.deepEqual(z.export().tape,before.tape);
+ assert.deepEqual(z.export().seams,before.seams);
+});
 test('causality: future changes cannot alter earlier seam or classification',()=>{
  const w=W.make(62,100),a=new E.Zipper(),b=new E.Zipper();
  const before=[];

@@ -35,7 +35,7 @@
  }
  class Zipper {
   constructor(opts={}){this.opts={threshold:opts.threshold??0.058,slipMargin:opts.slipMargin??0.008,relock:opts.relock??2};this.reset();}
-  reset(){this.tape=[];this.seams=[];this.sliders={mid:new Seam('mid',this.opts),fast:new Seam('fast',this.opts)};this.stats={steps:0,linked:0,open:0,jams:0,slips:0};}
+  reset(){this.tape=[];this.seams=[];this.opened=new Set();this.sliders={mid:new Seam('mid',this.opts),fast:new Seam('fast',this.opts)};this.stats={steps:0,linked:0,open:0,jams:0,slips:0};}
   append(observation){
    // Separate incoming immutable observations from diagnostic oracle truth.
    const clean={};for(const name of ['core',...TRACKS]){
@@ -55,10 +55,25 @@
    this.seams.push(entry);this.stats.steps++;this.stats.linked+=links.length;this.stats.open+=TRACKS.length-links.length;
    return {...entry,diagnostics:actions};
   }
+  // A moving access bubble can release/restore archived links independently
+  // of the original signal and independently of future slider decisions.
+  // This is link-level undo, not time travel or a reclassification.
+  window(start,end,track=null,open=true){
+    if(track!==null&&!TRACKS.includes(track))throw Error('Invalid track');
+    let count=0;for(const e of this.seams){
+      if(e.t<start||e.t>end)continue;
+      for(const l of e.links){if(track!==null&&l.track!==track)continue;
+        const key=e.t+':'+l.track,was=this.opened.has(key);
+        if(open)this.opened.add(key);else this.opened.delete(key);
+        if(was!==this.opened.has(key))count++;
+      }
+    }return count;
+  }
+  activeLinks(t){const e=this.seams.find(e=>e.t===t);return e?e.links.filter(l=>!this.opened.has(t+':'+l.track)):[];}
   // Reversibility is literal: every original tooth is preserved in the tape;
   // the seam contains references only and cannot modify a stored vector.
   original(t,track){const x=this.tape[t]?.[track];return x?{key:x.key.slice(),payload:x.payload.slice()}:null;}
-  export(){return {version:1,options:{...this.opts},tape:this.tape.map(frame=>Object.fromEntries(['core',...TRACKS].map(n=>[n,this.originalFrom(frame,n)]))),seams:this.seams.map(e=>({t:e.t,anchor:e.anchor,links:e.links.map(x=>({...x})),actions:e.actions.map(x=>({...x}))})),stats:{...this.stats}};}
+  export(){return {version:1,options:{...this.opts},tape:this.tape.map(frame=>Object.fromEntries(['core',...TRACKS].map(n=>[n,this.originalFrom(frame,n)]))),seams:this.seams.map(e=>({t:e.t,anchor:e.anchor,links:e.links.map(x=>({...x})),actions:e.actions.map(x=>({...x}))})),stats:{...this.stats},opened:Array.from(this.opened)};}
   originalFrom(frame,name){return {key:frame[name].key.slice(),payload:frame[name].payload.slice()};}
   detach(track){if(!TRACKS.includes(track))throw Error('Invalid track');const s=this.sliders[track];s.state='open';s.offset=null;s.streak=0;s.detaches++;}
  }
