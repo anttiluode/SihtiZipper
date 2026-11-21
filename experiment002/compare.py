@@ -290,7 +290,7 @@ def assess(scenes,diffused,metadata,make_examples=False):
     for name,r in totals.items():
         result[name]={'hidden_region_mse':round(r['pixels_sse']/max(1,r['pixels_n']),6),
                       'hidden_foreground_mse':round(r['foreground_sse']/max(1,r['foreground_n']),6),
-                      'hidden_center_forecast_mae_px':round(float(np.mean(r['hidden_centers_error'])) if r['hidden_centers_error'] else float('nan'),3),
+                      'hidden_center_forecast_mae_px':round(float(np.mean(r['hidden_centers_error'])),3) if r['hidden_centers_error'] else None,
                       'hidden_center_estimates':len(r['hidden_centers_error']),
                       'hidden_center_unknown':r['hidden_abstain'],
                       'false_observation_joins':r['observed_wrong'] if name in ('zipper','constant_velocity') else None,
@@ -300,7 +300,7 @@ def assess(scenes,diffused,metadata,make_examples=False):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=480);parser.add_argument('--train-scenes',type=int,default=320);parser.add_argument('--test-scenes',type=int,default=24)
+    parser=argparse.ArgumentParser();parser.add_argument('--steps',type=int,default=300);parser.add_argument('--train-scenes',type=int,default=240);parser.add_argument('--test-scenes',type=int,default=24)
     parser.add_argument('--device',default='auto',choices=['cpu','cuda','auto']);parser.add_argument('--out',default=str(ROOT/'results'/'receipt.json'))
     args=parser.parse_args();torch.manual_seed(410);np.random.seed(410);random.seed(410)
     device='cuda' if args.device=='auto' and torch.cuda.is_available() else ('cpu' if args.device=='auto' else args.device)
@@ -341,7 +341,7 @@ def main():
                        'limit':'appearance channels reveal identity when visible; only hidden-center association probes delayed tracking. This comparison does not establish superiority on unlabelled natural video.'},
              'train':record,'parameters':sum(p.numel() for p in diffuser.model.parameters()),'validation':{'scene_seeds':[40000,40023],'background_bias':best_bias,'candidate_biases':len(choices),'validation_hidden_loss_min':round(min(vals),6)},'inference_seconds':inftime,'device':device,'scores':scores,'examples':examples,
              'case_summaries':[{'seed':s['seed'],'reversed':s['reverse'],'zipper_jams':sum(f['actions'].count('JAM_ABSTAIN') for f in seq['frames'])}for s,seq in zip(test,sequences)]}
-    p=pathlib.Path(args.out);p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(receipt,indent=2))
+    p=pathlib.Path(args.out);p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(receipt,indent=2,allow_nan=False))
     modelp=p.with_name('tiny_ddpm.pt')
     torch.save({'state_dict':diffuser.model.cpu().state_dict(),'parameters':{'width':24,'ddpm_steps':18,'image_size':24,'channels':2},'train':record},modelp)
     print('Device:',device,'training:',record,'sampling seconds:',inftime,'validation bias:',best_bias)

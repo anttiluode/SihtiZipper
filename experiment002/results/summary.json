@@ -101,7 +101,7 @@
       "false_observation_joins": null,
       "observation_joins": null,
       "observation_abstentions": null,
-      "hidden_center_forecast_mae_px": NaN,
+      "hidden_center_forecast_mae_px": null,
       "hidden_center_estimates": 0,
       "hidden_center_unknown": 256
     },
