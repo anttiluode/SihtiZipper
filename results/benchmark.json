@@ -1,0 +1,167 @@
+{
+  "name": "SihtiZipper controlled switchyard",
+  "version": 1,
+  "date": "2026-11-21",
+  "protocol": {
+    "world": "3 synthetic 4D keyed streams plus private vector payloads",
+    "trackCount": 3,
+    "lookbacks": [
+      0,
+      1,
+      2
+    ],
+    "score": "source-tick identity for bound pairs; test-only oracle not passed to reader",
+    "seedSet": "1..40 fixed",
+    "windows": 390,
+    "threshold": 0.058,
+    "slipMargin": 0.008,
+    "falseJoinPenalty": 2,
+    "note": "No supervised training. All methods see the same causal observations. Fixed baseline has no abstention. Greedy and zipper use identical match threshold; zipper adds seam continuity. No real-sensor claims."
+  },
+  "results": [
+    {
+      "noise": 0.08,
+      "seeds": 40,
+      "total": 30800,
+      "methods": {
+        "zip": {
+          "correct": 28277,
+          "wrong": 69,
+          "open": 2454,
+          "correctRate": 0.9180844155844156,
+          "falseJoinRate": 0.0022402597402597403,
+          "coverage": 0.9203246753246753,
+          "utility": 0.9136038961038961
+        },
+        "fixed": {
+          "correct": 19240,
+          "wrong": 11560,
+          "open": 0,
+          "correctRate": 0.6246753246753247,
+          "falseJoinRate": 0.37532467532467534,
+          "coverage": 1,
+          "utility": -0.12597402597402596
+        },
+        "greedy": {
+          "correct": 28257,
+          "wrong": 89,
+          "open": 2454,
+          "correctRate": 0.9174350649350649,
+          "falseJoinRate": 0.0028896103896103894,
+          "coverage": 0.9203246753246753,
+          "utility": 0.9116558441558441
+        }
+      },
+      "meanSlips": 11.475,
+      "meanJams": 8.375
+    },
+    {
+      "noise": 0.13,
+      "seeds": 40,
+      "total": 30800,
+      "methods": {
+        "zip": {
+          "correct": 28232,
+          "wrong": 110,
+          "open": 2458,
+          "correctRate": 0.9166233766233767,
+          "falseJoinRate": 0.0035714285714285713,
+          "coverage": 0.9201948051948052,
+          "utility": 0.9094805194805194
+        },
+        "fixed": {
+          "correct": 19240,
+          "wrong": 11560,
+          "open": 0,
+          "correctRate": 0.6246753246753247,
+          "falseJoinRate": 0.37532467532467534,
+          "coverage": 1,
+          "utility": -0.12597402597402596
+        },
+        "greedy": {
+          "correct": 28124,
+          "wrong": 218,
+          "open": 2458,
+          "correctRate": 0.9131168831168831,
+          "falseJoinRate": 0.007077922077922078,
+          "coverage": 0.9201948051948052,
+          "utility": 0.898961038961039
+        }
+      },
+      "meanSlips": 13.6,
+      "meanJams": 8.375
+    },
+    {
+      "noise": 0.18,
+      "seeds": 40,
+      "total": 30800,
+      "methods": {
+        "zip": {
+          "correct": 27750,
+          "wrong": 348,
+          "open": 2702,
+          "correctRate": 0.900974025974026,
+          "falseJoinRate": 0.0112987012987013,
+          "coverage": 0.9122727272727272,
+          "utility": 0.8783766233766234
+        },
+        "fixed": {
+          "correct": 19240,
+          "wrong": 11560,
+          "open": 0,
+          "correctRate": 0.6246753246753247,
+          "falseJoinRate": 0.37532467532467534,
+          "coverage": 1,
+          "utility": -0.12597402597402596
+        },
+        "greedy": {
+          "correct": 27523,
+          "wrong": 575,
+          "open": 2702,
+          "correctRate": 0.8936038961038961,
+          "falseJoinRate": 0.018668831168831168,
+          "coverage": 0.9122727272727272,
+          "utility": 0.8562662337662338
+        }
+      },
+      "meanSlips": 25.325,
+      "meanJams": 14.125
+    },
+    {
+      "noise": 0.24,
+      "seeds": 40,
+      "total": 30800,
+      "methods": {
+        "zip": {
+          "correct": 22518,
+          "wrong": 986,
+          "open": 7296,
+          "correctRate": 0.7311038961038961,
+          "falseJoinRate": 0.032012987012987014,
+          "coverage": 0.7631168831168831,
+          "utility": 0.667077922077922
+        },
+        "fixed": {
+          "correct": 19240,
+          "wrong": 11560,
+          "open": 0,
+          "correctRate": 0.6246753246753247,
+          "falseJoinRate": 0.37532467532467534,
+          "coverage": 1,
+          "utility": -0.12597402597402596
+        },
+        "greedy": {
+          "correct": 22306,
+          "wrong": 1198,
+          "open": 7296,
+          "correctRate": 0.7242207792207792,
+          "falseJoinRate": 0.038896103896103894,
+          "coverage": 0.7631168831168831,
+          "utility": 0.6464285714285715
+        }
+      },
+      "meanSlips": 52.4,
+      "meanJams": 107.025
+    }
+  ]
+}

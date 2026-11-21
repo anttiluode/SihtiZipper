@@ -1,0 +1,10 @@
+{
+  "name": "sihti-zipper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reversible local multi-track vector zipper — offline instrument and controlled binding experiment",
+  "scripts": {
+    "test": "node tests/test.cjs && node tests/ui_smoke.cjs"
+  },
+  "license": "MIT"
+}
